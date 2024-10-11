@@ -1,0 +1,26 @@
+{
+  "name": "bank-account-event-sourcing",
+  "version": "0.0.0",
+  "description": "This project explores various Event Sourcing implementations using a bank account system as a case study. It handles events like deposits, withdrawals, and transfers while demonstrating different approaches to building event-sourced systems.",
+  "main": "index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/oscareduardolp6/bank-account-event-sourcing.git"
+  },
+  "keywords": [
+    "event-sourcing",
+    "eventSourcing",
+    "bank",
+    "account",
+    "learning"
+  ],
+  "author": "Oscar López",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/oscareduardolp6/bank-account-event-sourcing/issues"
+  },
+  "homepage": "https://github.com/oscareduardolp6/bank-account-event-sourcing#readme"
+}
