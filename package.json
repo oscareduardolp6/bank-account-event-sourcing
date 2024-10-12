@@ -25,7 +25,12 @@
   "homepage": "https://github.com/oscareduardolp6/bank-account-event-sourcing#readme",
   "devDependencies": {
     "@types/jest": "^29.5.13",
+    "@types/uuid": "^10.0.0",
     "jest": "^29.7.0",
     "ts-jest": "^29.2.5"
+  },
+  "dependencies": {
+    "fp-ts": "^2.16.9",
+    "uuid": "^10.0.0"
   }
 }
