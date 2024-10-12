@@ -17,5 +17,5 @@ export const makeCreator = <Input, SanitizedOutput extends Input, ErrorType, Res
   Option.map(sanitizer => sanitizer(val)),
   Option.getOrElse(() => val as SanitizedOutput), 
   Either.fromPredicate(typeGuard, onInvalid) , 
-  val => val as Either.Either<ErrorType, ResultType>
+  val => val as Either.Either<ErrorType, ResultType>, 
 )

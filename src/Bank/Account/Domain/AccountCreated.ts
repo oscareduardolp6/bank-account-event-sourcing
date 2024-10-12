@@ -1,8 +1,7 @@
 import { struct } from "fp-ts/Eq";
 import { createEq, DomainEvent } from "../../Shared/Domain/DomainEvent";
 import { UUID } from "../../Shared/Domain/UUID";
-import { Eq as eqString } from 'fp-ts/string'
-import { flow } from "fp-ts/function";
+import { Eq as eqString } from 'fp-ts/string';
 
 export interface AccountCreated extends DomainEvent {
   name: 'account.created';
@@ -20,4 +19,4 @@ const dataEq = struct<AccountCreated['data']>({
   accountId: eqString
 })
 
-export const equals = flow(createEq(dataEq).equals)
+export const equals = createEq(dataEq).equals

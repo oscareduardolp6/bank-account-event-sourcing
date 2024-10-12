@@ -1,16 +1,16 @@
 import { create } from "./Create"
 import { call as callTask } from '../../../Shared/Domain/TaskExt'
-import { getArgumentOfCall, getNumberOfCalls } from "../../../../../tests/Shared/Domain/jestFns"
+import { assertMockHasBeenCalledOnlyOnce, getArgumentOfCall } from "../../../../../tests/Shared/Domain/jestFns"
 import { flow, pipe } from "fp-ts/lib/function"
 import { isRight as isCorrect, isLeft as isIncorrect } from 'fp-ts/Either'
 import * as AccountCreated from "../../Domain/AccountCreated"
 import * as TO from 'fp-ts/TaskOption'
 import * as T from 'fp-ts/Task'
 import * as O from 'fp-ts/Option'
-import * as IO from 'fp-ts/IO'
 import * as UUID from "../../../Shared/Domain/UUID"
 import * as UUIDMother from '../../../../../tests/Shared/Domain/UUIDMother'
 import * as NEA from 'fp-ts/NonEmptyArray'
+import { assertMockHasBeenCalledWith } from "../../../../../tests/Bank/AccountJestFns"
 
 
 describe('Create Account', () => {
@@ -48,8 +48,8 @@ describe('Create Account', () => {
       callTask
     )
     
-    assertMockHasBeenCalledWith(apply, event)
-    assertMockHasBeenCalledWith(publish, event)
+    assertMockHasBeenCalledWith(apply, event, AccountCreated.equals)
+    assertMockHasBeenCalledWith(publish, event, AccountCreated.equals)
 
   })
 
@@ -129,8 +129,8 @@ describe('Create Account', () => {
       validateCreation
     )
 
-    assertMockHasBeenCalledWith(apply, event)
-    assertMockHasBeenCalledWith(publish, event)
+    assertMockHasBeenCalledWith(apply, event, AccountCreated.equals)
+    assertMockHasBeenCalledWith(publish, event, AccountCreated.equals)
 
     find.mockReturnValue(TO.of(account)) 
 
@@ -145,14 +145,3 @@ describe('Create Account', () => {
   })
 
 })
-
-const assertMockHasBeenCalledOnlyOnce = flow(
-  getNumberOfCalls, 
-  numberOfCalls => expect(numberOfCalls).toBe(1)
-)
-
-const assertMockHasBeenCalledWith = (mock: jest.Mock, expectedEvent: AccountCreated.AccountCreated) => pipe(
-  getArgumentOfCall(mock), 
-  IO.of, 
-  calledEvent => expect(AccountCreated.equals(calledEvent(), expectedEvent)), 
-)
