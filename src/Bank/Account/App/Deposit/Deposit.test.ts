@@ -13,12 +13,15 @@ import { AccountNotFound, isAccountNotFound } from '../../Domain/AccountNotFound
 import * as UUID from '../../../Shared/Domain/UUID';
 import * as TO from 'fp-ts/TaskOption';
 
+type TestDeps = { apply: Apply, find: Find, publish: Publish }
+type Deps = TestDeps & Record<keyof TestDeps, jest.Mock> 
+
 
 describe('Deposit to an Account', () => {
   let apply: jest.Mock, 
       find: jest.Mock, 
       publish: jest.Mock;
-  let testDeps: { apply: Apply, find: Find, publish: Publish }; 
+  let testDeps: Deps 
   let mocks: jest.Mock[]; 
 
   beforeEach(() => {
@@ -26,9 +29,13 @@ describe('Deposit to an Account', () => {
     find = jest.fn()
     publish = jest.fn()
 
-    mocks = [apply, publish]
+    testDeps = {
+      apply, 
+      find,
+      publish
+    } 
 
-    testDeps = { apply, find, publish }
+    mocks = [apply, publish]
   })
 
   it('should deposit without error', async () => {
@@ -38,7 +45,7 @@ describe('Deposit to an Account', () => {
           createEvent = AccountCreated(accountId), 
           account: Account = [createEvent, depositEvent]
 
-    configureMockCorrectReturnValues(find, account, apply, publish);
+    configureMockCorrectReturnValues({ ...testDeps , account });
 
     const executeTestWith = flow(
       deposit({ accountId, ammount}),
@@ -58,7 +65,7 @@ describe('Deposit to an Account', () => {
           createdEvent = AccountCreated(accountId); 
     const account: Account = [createdEvent, depositEvent] 
 
-    configureMockCorrectReturnValues(find, account, apply, publish)
+    configureMockCorrectReturnValues({ ...testDeps, account })
 
     const executeTestWith = flow(
       deposit({ accountId, ammount }), 
@@ -114,7 +121,7 @@ function configureMockNonExistingAccount(find: jest.Mock) {
   find.mockReturnValueOnce(TO.none)
 }
 
-function configureMockCorrectReturnValues(find: jest.Mock, account: Account, apply: jest.Mock, publish: jest.Mock) {
+function configureMockCorrectReturnValues({ account, apply, find, publish }: Deps & { account: Account }) {
   find.mockReturnValueOnce(TO.of(account));
   apply.mockReturnValueOnce(Promise.resolve());
   publish.mockReturnValueOnce(Promise.resolve());
