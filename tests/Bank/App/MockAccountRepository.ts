@@ -16,8 +16,7 @@ export class MockAccountRepository implements Repository<Account, AccountEvent> 
 
 
   async load(id: UUID): Promise<Option<Account>> {
-    const result = this.loadMock(id)
-    return result ?? O.none
+    return O.fromNullable(this.loadMock(id))
   }
 
   async apply(event: AccountEvent): Promise<void> {
@@ -25,7 +24,7 @@ export class MockAccountRepository implements Repository<Account, AccountEvent> 
   }
 
   returnOnLoad(account: Account) {
-    this.loadMock.mockReturnValueOnce(O.of(account))
+    this.loadMock.mockReturnValueOnce(account)
   }
 
   assertApplyHasBeenCalledWith(expectedEvent: AccountEvent) {
