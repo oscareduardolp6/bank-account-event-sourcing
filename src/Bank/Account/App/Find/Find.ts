@@ -1,7 +1,7 @@
 import { fromEither, flatMap as andThen } from "fp-ts/lib/TaskOption";
 import { flow, pipe } from "fp-ts/lib/function";
-import * as domain_UUID from "../../Shared/Domain/UUID";
-import * as AccountRepository from '../Domain/AccountRepository';
+import * as domain_UUID from "../../../Shared/Domain/UUID";
+import * as AccountRepository from '../../Domain/AccountRepository';
 
 
 export const find = (id: string) => ({ find: findInDb }: FindDeps) => pipe(

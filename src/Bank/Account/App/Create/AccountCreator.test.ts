@@ -1,21 +1,19 @@
-import { create } from "../../../src/Bank/Account/App/Create"
-import { call, call as callTask } from '../../../src/Bank/Shared/Domain/TaskExt'
-import { getArgumentOfCall, getNumberOfCalls } from "../../Shared/Domain/jestFns"
+import { create } from "./Create"
+import { call as callTask } from '../../../Shared/Domain/TaskExt'
+import { getArgumentOfCall, getNumberOfCalls } from "../../../../../tests/Shared/Domain/jestFns"
 import { flow, pipe } from "fp-ts/lib/function"
 import { isRight as isCorrect, isLeft as isIncorrect } from 'fp-ts/Either'
-import * as Console from 'fp-ts/Console'
-import * as Account from '../../../src/Bank/Account/Domain/Account'
-import * as AccountCreated from "../../../src/Bank/Account/Domain/AccountCreated"
+import * as AccountCreated from "../../Domain/AccountCreated"
 import * as TO from 'fp-ts/TaskOption'
 import * as T from 'fp-ts/Task'
 import * as O from 'fp-ts/Option'
 import * as IO from 'fp-ts/IO'
-import * as UUID from "../../../src/Bank/Shared/Domain/UUID"
-import * as UUIDMother from '../../Shared/Domain/UUIDMother'
+import * as UUID from "../../../Shared/Domain/UUID"
+import * as UUIDMother from '../../../../../tests/Shared/Domain/UUIDMother'
 import * as NEA from 'fp-ts/NonEmptyArray'
 
 
-describe('Account', () => {
+describe('Create Account', () => {
   let apply: jest.Mock,
       find: jest.Mock, 
       publish: jest.Mock; 
@@ -156,7 +154,5 @@ const assertMockHasBeenCalledOnlyOnce = flow(
 const assertMockHasBeenCalledWith = (mock: jest.Mock, expectedEvent: AccountCreated.AccountCreated) => pipe(
   getArgumentOfCall(mock), 
   IO.of, 
-  // IO.tap(calledEvent => Console.log({ calledEvent })),
-  // IO.tap(() => Console.log({ expectedEvent })), 
   calledEvent => expect(AccountCreated.equals(calledEvent(), expectedEvent)), 
 )

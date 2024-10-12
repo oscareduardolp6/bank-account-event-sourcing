@@ -1,12 +1,12 @@
 import { flow, pipe } from "fp-ts/lib/function";
 import { map as injectDeps } from "fp-ts/lib/Reader";
-import { find } from "./Find";
-import { UUID } from "../../Shared/Domain/UUID";
+import { find } from "../Find";
+import { UUID } from "../../../Shared/Domain/UUID";
 import { map as whenSearchFinish } from 'fp-ts/Task';
-import { AccountCreated } from "../Domain/AccountCreated";
+import { AccountCreated } from "../../Domain/AccountCreated";
 import * as O from 'fp-ts/Option';
 import * as E from 'fp-ts/Either';
-import { mutationUseCase } from "../../Shared/Domain/UseCase";
+import { mutationUseCase } from "../../../Shared/Domain/UseCase";
 
 export const create = mutationUseCase((accountId: string) => pipe(
     searchAccountExists(accountId), 
