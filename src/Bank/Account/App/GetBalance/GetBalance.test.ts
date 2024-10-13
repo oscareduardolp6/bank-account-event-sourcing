@@ -1,6 +1,6 @@
 import * as UUID from '../../../Shared/Domain/UUID'
-import * as InMemoryRepository from '../../../Shared/Infrastructure/InMemoryRepository'
-import { AccountBalance } from '../../Domain/Account'
+import { InMemoryRepository } from '../../../Shared/Infrastructure/InMemoryRepository'
+import { Account, AccountBalance } from '../../Domain/Account'
 import { flow, pipe } from 'fp-ts/lib/function'
 import { getBalance } from './GetBalance'
 import { assertAsyncOptionalIsNone, assertAsyncOptionValueIs } from '../../../../../tests/Shared/Domain/jestFns'
@@ -8,17 +8,27 @@ import { create } from '../Create/Create'
 import { deposit } from '../Deposit/Deposit'
 import { Applicative } from 'fp-ts/Reader'
 import { sequenceS } from 'fp-ts/lib/Apply'
+import { Apply } from '../../../Shared/Domain/Apply'
+import { Load } from '../../../Shared/Domain/Load'
+import { Publish } from '../../../Shared/Domain/Publish'
 
-const deps = {
-  apply: InMemoryRepository.apply,
-  find: InMemoryRepository.load,
-  publish: jest.fn()
+type Deps = {
+  apply: Apply, 
+  find: Load<Account>, 
+  publish: Publish
 }
 
 describe('Get Balance of an Account', () => {
+  let deps: Deps; 
 
   beforeEach(() => {
-    InMemoryRepository.clear()
+    const repository = new InMemoryRepository()
+    deps = {
+      apply: repository.apply.bind(repository), 
+      find: repository.load.bind(repository), 
+      publish: jest.fn()
+    }
+
   })
 
   it('should return none if the account does not exists', async () => {
@@ -26,7 +36,7 @@ describe('Get Balance of an Account', () => {
       getBalance(UUID.random()),
       assertAsyncOptionalIsNone
     )
-    await executeTestWith({ find: InMemoryRepository.load })
+    await executeTestWith(deps)
   })
 
   it('should sum all the deposits', async () => {
@@ -66,7 +76,7 @@ describe('Get Balance of an Account', () => {
     )
 
     await creation()
-    await checkBalanceIs0With({ find: InMemoryRepository.load })
+    await checkBalanceIs0With(deps)
   })
 
 })

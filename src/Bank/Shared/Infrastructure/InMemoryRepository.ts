@@ -1,23 +1,29 @@
 import { pipe } from 'fp-ts/lib/function'
-import { Apply } from '../Domain/Apply'
 import { DomainEvent } from '../Domain/DomainEvent'
 import * as NEA from 'fp-ts/NonEmptyArray'
 import * as T from 'fp-ts/Task'
 import { UUID } from '../Domain/UUID'
 
-let events: DomainEvent[] = []
+export class InMemoryRepository {
+  private events: DomainEvent[] 
 
-export const clear = () => {
-  events = []
+  constructor(){
+    this.events = []
+  }
+
+  async apply<T extends DomainEvent>(event: T) {
+    this.events.push(event)
+  }
+
+  load<AggregateEvent extends DomainEvent>(aggregateId: UUID) {
+    const foundedEvents = this.events
+      .filter(event => event.aggregateId === aggregateId) as AggregateEvent[] 
+    return pipe(
+      foundedEvents, 
+      NEA.fromArray, 
+      T.of
+    )
+  }
+
+
 }
-
-export const apply: Apply = async <T extends DomainEvent>(event: T) => {
-  events.push(event)
-}
-
-export const load = <AggregateEvent extends DomainEvent>(aggregateId: UUID) => pipe(
-  (events
-  .filter(event => event.aggregateId === aggregateId) as AggregateEvent[]), 
-  NEA.fromArray, 
-  T.of, 
-) 
