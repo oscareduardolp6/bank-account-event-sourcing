@@ -3,7 +3,6 @@ import { InMemoryRepository } from '../../../Shared/Infrastructure/InMemoryRepos
 import { Account, AccountBalance } from '../../Domain/Account'
 import { flow, pipe } from 'fp-ts/lib/function'
 import { getBalance } from './GetBalance'
-import { assertAsyncOptionalIsNone, assertAsyncOptionValueIs } from '../../../../../tests/Shared/Domain/jestFns'
 import { create } from '../Create/Create'
 import { deposit } from '../Deposit/Deposit'
 import { Applicative } from 'fp-ts/Reader'
@@ -11,6 +10,7 @@ import { sequenceS } from 'fp-ts/lib/Apply'
 import { Apply } from '../../../Shared/Domain/Apply'
 import { Load } from '../../../Shared/Domain/Load'
 import { Publish } from '../../../Shared/Domain/Publish'
+import { assertAsyncOptionalIsNone, assertAsyncOptionValueIs } from '../../../../../tests/Shared/Domain/jestTaskOptionFns'
 
 type Deps = {
   apply: Apply, 
@@ -47,7 +47,7 @@ describe('Get Balance of an Account', () => {
 
     const arrangeMutations = pipe({
       creation: create(accountId), 
-      deposit1: deposit({ accountId, ammount: ammount1}), 
+      deposit1: deposit({ accountId, ammount: ammount1 }), 
       deposit2: deposit({ accountId, ammount: ammount2 })
     }, sequenceS(Applicative))
 

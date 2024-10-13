@@ -1,52 +1,59 @@
-import { pipe } from "fp-ts/lib/function"
+import { flow, pipe } from "fp-ts/lib/function"
 import { AccountEvent } from "../../Domain/Account"
 import { find } from "./Find"
-import { call as callTask } from "../../../Shared/Domain/TaskExt"
+import { assertAsyncOptionalIsNone, assertAsyncOptionalIsNotNone } from "../../../../../tests/Shared/Domain/jestTaskOptionFns"
+import { InMemoryRepository } from "../../../Shared/Infrastructure/InMemoryRepository"
+import { create } from "../Create"
+import { assertAsyncResultIsCorrect } from "../../../../../tests/Shared/Domain/jestTaskEitherFns"
+import { assertMockHasBeenCalledOnlyOnce, assertMockHasNotBeenCalled } from "../../../../../tests/Shared/Domain/jestFns"
 import * as UUIDMother from '../../../../../tests/Shared/Domain/UUIDMother'
 import * as UUID from "../../../Shared/Domain/UUID"
-import * as AccountCreated from "../../Domain/AccountCreated"
-import * as T from 'fp-ts/Task'
-import * as TO from 'fp-ts/TaskOption'
 import * as O from 'fp-ts/Option'
 import * as NEA from 'fp-ts/NonEmptyArray'
 
 describe('Find Account', () => {
-  let findInDb: jest.Mock
+  let testDeps; 
 
   beforeEach(() => {
-    findInDb = jest.fn()
+    const repository = new InMemoryRepository()
+    testDeps = { 
+      find: repository.load.bind(repository), 
+      apply: repository.apply.bind(repository), 
+      publish: jest.fn()
+    }
   })
 
   it('should be find an existing account', async () => {
-    const id = UUID.random() 
-    const search = find(id)({ find: findInDb })
-    const event = AccountCreated.AccountCreated(id) 
-    const account = createAccountFromEvent(event) 
-    findInDb.mockReturnValueOnce(TO.of(account))
+    const accountId = UUID.random()
 
-    await pipe(
-      search, 
-      T.map(O.isSome),
-      T.map(expect), 
-      callTask
+    const checkAccountCreationIsCorrectUsing = flow(
+      create(accountId), 
+      assertAsyncResultIsCorrect
     )
 
+    const checkAccountIsFindedUsing = flow(
+      find(accountId), 
+      assertAsyncOptionalIsNotNone, 
+    )
+
+    await checkAccountCreationIsCorrectUsing(testDeps)
+    await checkAccountIsFindedUsing(testDeps)
+
+    assertMockHasBeenCalledOnlyOnce(testDeps.publish)
   })
 
   it('should return nothing if the id is invalid', async () => {
     const id = UUIDMother.invalidUUID()
-    const search = find(id)({ find: findInDb })
-    await pipe(
-      search, 
-      T.map(O.isNone), 
-      T.map(expect), 
-      callTask
+    const findMock = jest.fn()
+
+    const checkAccountToBeNoneUsing = flow(
+      find(id), 
+      assertAsyncOptionalIsNone
     )
+    
+    await checkAccountToBeNoneUsing({ ...testDeps, find: findMock})
+
+    assertMockHasNotBeenCalled(findMock)
   })
 
 })
-
-const createAccountFromEvent = (event: AccountEvent) => pipe(
-  NEA.fromArray([event]), 
-  O.getOrElseW(() => { throw new Error('Invalid Account state') })
-)

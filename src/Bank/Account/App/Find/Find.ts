@@ -4,7 +4,6 @@ import { Load } from "../../../Shared/Domain/Load";
 import * as domain_UUID from "../../../Shared/Domain/UUID";
 import { Account } from "../../Domain/Account";
 
-
 export const find = (id: string) => ({ find: findInDb }: FindDeps) => pipe(
     parseToUUID(id), 
     andThen(findInDb), 
