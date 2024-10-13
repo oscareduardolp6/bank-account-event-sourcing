@@ -7,13 +7,13 @@ import { assertMockHasBeenCalledWith } from '../../../../../tests/Bank/AccountJe
 import { isNumberNotPositive, NumberNotPositive } from '../../../Shared/Domain/PositiveNumber/NumberNotPositive';
 import { assertAsyncResultIsCorrect, assertMockHasNotBeenCalled, assertOverFailedAsyncResult } from '../../../../../tests/Shared/Domain/jestFns';
 import { Apply } from '../../../Shared/Domain/Apply';
-import { Find } from '../../Domain/AccountRepository';
 import { Publish } from '../../../Shared/Domain/Publish';
 import { AccountNotFound, isAccountNotFound } from '../../Domain/AccountNotFound';
 import * as UUID from '../../../Shared/Domain/UUID';
 import * as TO from 'fp-ts/TaskOption';
+import { Load } from '../../../Shared/Domain/Load';
 
-type TestDeps = { apply: Apply, find: Find, publish: Publish }
+type TestDeps = { apply: Apply, find: Load<Account>, publish: Publish }
 type Deps = TestDeps & Record<keyof TestDeps, jest.Mock> 
 
 

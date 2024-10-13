@@ -12,7 +12,6 @@ import * as UUIDMother from '../../../../../tests/Shared/Domain/UUIDMother'
 import * as NEA from 'fp-ts/NonEmptyArray'
 import { assertMockHasBeenCalledWith } from "../../../../../tests/Bank/AccountJestFns"
 
-
 describe('Create Account', () => {
   let apply: jest.Mock,
       find: jest.Mock, 

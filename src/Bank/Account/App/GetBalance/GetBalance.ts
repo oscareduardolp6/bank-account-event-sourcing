@@ -1,12 +1,9 @@
-import * as UUID from '../../../Shared/Domain/UUID'
-import * as E from 'fp-ts/Either'
-import { pipe } from "fp-ts/function";
-import { Find } from "../../Domain/AccountRepository";
+import { flow } from "fp-ts/function";
+import { map as ifAccountExists } from 'fp-ts/TaskOption';
 import { find } from '../Find';
+import { calculateBalance } from '../../Domain/Account';
 
-type GetBalanceDeps = {
-}
-
-export const getBalance = (id: string) => (deps: GetBalanceDeps) => pipe(
+export const getBalance = (id: string) => flow(
   find(id), 
+  ifAccountExists(calculateBalance)
 )
