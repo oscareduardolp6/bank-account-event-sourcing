@@ -11,6 +11,7 @@ import * as UUID from '../../../Shared/Domain/UUID'
 import * as R from 'fp-ts/Reader'
 import { getBalance } from '../GetBalance';
 import { assertAsyncOptionValueIs } from '../../../../../tests/Shared/Domain/jestTaskOptionFns';
+import { assertAsyncResultIsCorrect, assertAsyncResultIsIncorrect } from '../../../../../tests/Shared/Domain/jestTaskEitherFns';
 
 type TestDeps = { apply: Apply, find: Load<Account>, publish: Publish }
 type Deps = TestDeps & Record<keyof TestDeps, jest.Mock> 
@@ -56,6 +57,27 @@ describe('Deposit to an Account', () => {
   })
 
   it('should fail with negative ammount', async () => {
+    const accountId = UUID.random() 
+
+    const checkAccountCreationIsCorrectUsing = flow(
+      create(accountId), 
+      assertAsyncResultIsCorrect
+    )
+
+    const checkDepositIsOkUsing = flow(
+      deposit({ accountId, ammount: -20 }), 
+      assertAsyncResultIsIncorrect
+    )
+
+    const checkBalanceIsZeroUsing = flow(
+      getBalance(accountId), 
+      assertAsyncOptionValueIs(0)
+    )
+
+    await checkAccountCreationIsCorrectUsing(testDeps) 
+    await checkDepositIsOkUsing(testDeps)
+    await checkBalanceIsZeroUsing(testDeps)
+    
   })
 
 })
