@@ -18,13 +18,12 @@ export const assertAsyncOptionValueIs = <T>(expectedValue: T) =>
 export const assertAsyncOptionalIsNotNone = <T>(result: TO.TaskOption<T>) => pipe(
   result, 
   T.map(O.match(throwError, expectTrue)), 
-  T.asUnit, 
+  val => val, 
   applyTask
 )
 
 export const assertAsyncOptionalIsNone = <T>(result: TO.TaskOption<T>) => pipe(
   result, 
   T.map(O.match(expectTrue, throwError)), 
-  T.asUnit, 
   applyTask
 )

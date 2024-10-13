@@ -9,9 +9,9 @@ export type DomainEvent = {
   data?: unknown
 }
 
-export const createEq = (attributesEq: Eq<unknown>) => struct<DomainEvent>({
+export const createEq = <T = unknown>(attributesEq: Eq<T>) => struct<DomainEvent>({
   aggregateId: stringEq, 
   name: stringEq, 
   occurredOn: eqDate, 
-  data: attributesEq
+  data: attributesEq as Eq<unknown>
 })

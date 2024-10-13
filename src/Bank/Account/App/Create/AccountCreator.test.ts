@@ -30,7 +30,7 @@ describe('Create Account', () => {
 
     const checkResultIsCorrectUsing = flow(
       create(accountId), 
-      assertAsyncResultIsCorrect
+      assertAsyncResultIsIncorrect
     )
 
     const checkAccountExistsUsing = flow(

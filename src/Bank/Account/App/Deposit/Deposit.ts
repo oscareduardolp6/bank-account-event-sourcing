@@ -15,5 +15,5 @@ export const deposit = mutationUseCase((payload: DepositMade['data']) => flow(
     DepositAmmount(payload.ammount), 
     E.map(_ammount => DepositMade(payload)), 
     E.map(O.of), 
-  )),
+  ))
 ))

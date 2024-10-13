@@ -1,12 +1,14 @@
 import * as NonEmptyArray from "fp-ts/lib/NonEmptyArray";
 import { AccountCreated } from "./AccountCreated";
 import { DepositMade } from "./DepositMade";
+import { WithdrawnAmmount } from "./WithdrawnAmmount";
 
 export type AccountBalance = number & { type: 'AccountBalance'}
 
 export type AccountEvent = 
   AccountCreated 
   | DepositMade
+  | WithdrawnAmmount
 
 export type Account = NonEmptyArray.NonEmptyArray<AccountEvent>
 
@@ -16,6 +18,7 @@ export const calculateBalance = (account: Account) => account
   .reduce((balance, event) => {
     switch(event.name) {
       case 'account.created': return balance as AccountBalance
+      case 'account.withdrawn': return balance - event.data.ammount as AccountBalance
       case 'account.deposited': return balance + event.data.ammount as AccountBalance
     }
   }, DEFAULT_INITIAL_BALANCE)
